@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="description" content="LLM Evals Research Advice">
+	<title>Sara Fish • LLM Evals Research Advice</title>
+	<link rel="stylesheet" href="../../style.css">
+</head>
+
+[<a href="../../index.html">Back to main page</a>]<br/>
+
+<h1>Some LLM evals research advice</h1>
+<i>June 9, 2026</i><br>
+
+<p>Below are some general pieces of advice I would give to anybody conducting LLM evals / behavioral LLM science research. Take it or leave it -- you may find that you work more effectively doing things differently -- these are just some points to consider.</p>
+
+<p>(Note: I expect some of this advice to become outdated as AI technology advances, particularly the lines I draw on what AI can and can't be trusted with.)</p>
+
+<h2>Low-level technical stuff</h2>
+<h3>Log everything</h3>
+
+<p>Logging is important for two reasons. First, facilitating reproducibility. Second, saving the data from your experiments in a way that makes downstream analysis easier.</p>
+
+<p>All of your experiments should log:</p>
+<ol>
+	<li>All LLM calling details
+		<ol>
+			<li>All LLM inputs, outputs, and query parameters</li>
+			<li>Timestamps of when the LLM was called and what LLM version was used (if applicable)</li>
+			<li>The completion object (to cover your bases)</li>
+		</ol>
+	</li>
+	<li>All experiment details
+		<ol>
+			<li>Save all params necessary for re-running the experiment (so things like sample size, which LLMs are tested). Personally, I like to save these to a dedicated file <code>global_params.csv</code> .</li>
+			<li>Save all of the LLM calls that happened in the experiment. Personally, I like to create a <code>logs.csv</code> file where every row is a different LLM query.</li>
+		</ol>
+	</li>
+</ol>
+
+<h3>Always know what your LLM inputs look like</h3>
+
+<p>Even when heavily relying on an AI coding tool, you should always have a good sense of what inputs are being fed into the LLM. It's easier than you think to waste money on completely meaningless experiments, e.g. because there is something wrong with the prompt. In particular, if a prompt is confusing or underspecified, LLMs tend to behave more incoherently, which can make your job more difficult.</p>
+
+<p>Personally, I like to have a dedicated file <code>prompts.py</code> where all prompts or prompt templates live. That way, it's easier to know what prompts the LLM is seeing, compared to if the prompt is being built in a scattered way across multiple methods/files.</p>
+
+<h3>Always know what your <i>raw</i> LLM outputs look like</h3>
+
+<p>In addition to looking at whatever output metrics are of interest, you should always have a good sense of what the <i>raw</i> LLM completions look like. This way you can make sure the LLM is behaving in a way you expect.</p>
+
+<p>Personally, I like having an AI coding tool write to a <code>.txt</code> file some example complete transcripts, to make sure everything looks right. For larger datasets, it's also very easy to ask an AI coding tool to make you a dashboard visualizing the <i>raw</i> data (I would <i>not</i> trust it to do a good job at interpreting the data).</p>
+
+<p>It's also important to read some outputs carefully, not just skim them. Here's an example from my own research. I ran a small experiment, and it seemed like a change in the prompt had a certain effect on LLM behavior. Then I read the raw LLM outputs. It turns out, the bulk of the variation in the LLM outputs was due to it making math mistakes (like writing 200/0.2 = 400 instead of 1000), rendering the measured effect on LLM behavior meaningless.</p>
+
+<h3>Test on two cheap LLMs from different providers</h3>
+
+<p>Testing on <i>cheap</i> LLMs is better because, if you are iterating quickly, most of your experiment data will be garbage anyway. (For example, if you notice a problem with the prompt, all the data with the old prompt is now worthless.)</p>
+
+<p>Testing on <i>two</i> LLMs from different providers is often helpful so that you can make sure your behavior of interest replicates, and is not just a quirk of a specific LLM.</p>
+
+<h2>High-level strategy</h2>
+<h3>Frontload thinking, postpone engineering</h3>
+
+<p>Depending on the nature of the project, "thinking" can mean: reading, brainstorming, running tiny (&lt;2hr) pilot experiments, etc. And by engineering, I mean any nontrivial software design.</p>
+
+<p>Reasons to postpone engineering (until it's clear you need it):</p>
+<ul>
+	<li>AI is getting better at software engineering faster than it is getting better at "thinking"-type tasks. So, it's more efficient to write ambitious software later.</li>
+	<li>Sloppy code is easier to work with now that we have AI coding tools. So the project size cutoff for where "tech debt" sets in is larger with AI coding tools than it used to be.</li>
+</ul>
+
+<h3>Read human writing</h3>
+
+<p>I think reading is very important and highly underrated (by the applied AI safety community) as a part of the research process.</p>
+
+<p>Some reasons to read in general:</p>
+<ul>
+	<li>Reading will give you better ideas.</li>
+	<li>Reading will help you make sure what you are doing is novel.</li>
+	<li>Reading will train you to recognize flaws in papers, which in turn will help you avoid similar flaws in your own work.</li>
+</ul>
+
+<p>Some further reasons to read human writing specifically:</p>
+<ul>
+	<li>AI writing is very same-y compared to human writing. Reading different kinds of prose can help you be a better or quicker writer. (I'm saying this as a mediocre writer who thinks they'd be even worse if they read less or relied on AI more.)</li>
+	<li>Personally, I believe too much AI interaction is bad for the human brain. I think AI-written text is "smooth" in a way human-written text is not, and the way that it "reward hacks" the human mind is not healthy.</li>
+</ul>
+
+<p>Personally, my preferred workflow is as follows:</p>
+<ul>
+	<li>Ask AI for a lit review, focusing on good papers.</li>
+	<li>Actually read some of the papers myself.</li>
+	<li>If I am stuck, ask the AI questions.</li>
+	<li>Supplement the AI's lit review with old-fashioned lit review techniques, like using google scholar.</li>
+</ul>
+
+<p>If you are skeptical that reading is worth the time, you might consider trying out the following. Ask your favorite AI to critique a paper you are extremely familiar with (e.g. are an author of), or write a lit review on an area you are extremely familiar with. My guess is you will notice issues with what the AI says: maybe it nitpicks things that are not actual problems, maybe it doesn't notice or emphasize the real problems, maybe it overlooks/misunderstands certain aspects entirely, etc.</p>
+
+<h3>Beware AI cognitive monoculture</h3>
+
+<p>This refers to the phenomenon that AI outputs are often less diverse / creative / novel than high-quality human thought.</p>
+
+<p>One big place this crops up is experiment design. AI coding tools will design experiments with "default" choices, which has two problems. First, often, these defaults are bad, sometimes for subtle reasons. Second, even when the defaults are good, research is about doing something different, so if you are deferring to the AI coding tool for everything, you're less likely to find something new and interesting.</p>
+
+<p><b>In particular, if you rely on an AI coding tool too heavily, it's likely that your work will have essentially zero counterfactual impact, because what you did is likely to be easily replicable by a slightly more advanced AI coding tool acting completely autonomously.</b> So, there is this balance to strike between doing work with counterfactual impact, and doing work that is bitter lesson compatible. I don't think anybody knows how to get this right, I'm just pointing it out as a something to keep in mind.</p>
+
+<p>I also think that AI cognitive monoculture can be a problem when you learn too much from AI, rather than from humans. The main mechanism through which this happens is unknown unknowns, which are more of a problem with AI due to sycophancy. (That is, the AI "code-switches" according to its model of you, and explains things from a perspective compatible with its existing model of your worldview, leaving out possibly important things you would have never considered.) Even putting personalization aside, I think AI systems can have specific perspectives/worldviews/opinions that shape how it explains things.</p>
+
+</html>

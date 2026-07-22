@@ -29,6 +29,39 @@
 		line-height: 1.2
 	}
 
+	/* The mirrored content hardcodes dark-gray text (<font color="#2a2a2a">,
+	   inline rgb(42, 42, 42)), which is unreadable in dark mode, and mixes
+	   legacy <font size> values. Override via CSS so the mirrored markup
+	   itself stays untouched: text inherits the body color, body text is a
+	   uniform 18px, and headings get a simple scale. */
+	font,
+	[style*="rgb(42, 42, 42)"] {
+		color: inherit !important;
+	}
+
+	font {
+		font-size: inherit;
+	}
+
+	font[size="5"] {
+		font-size: 22px;
+	}
+
+	font[size="6"] {
+		font-size: 26px;
+	}
+
+	font[size="7"] {
+		font-size: 32px;
+	}
+
+	/* Links in the gold alert box: the default and dark-mode link blues are
+	   low-contrast on #FFD700, so use a dark blue that reads on gold in both
+	   color schemes. The ID selector outranks the dark-mode a:link rules. */
+	#alertbox a {
+		color: #1a0dab;
+	}
+
 	@media (prefers-color-scheme: dark) {
 		body {
 			color: #c9d1d9;
@@ -59,7 +92,6 @@
 
 
 				<div class="paragraph; content-wrap; main-wrap" id='alertbox' style="text-align:left; background-color: #FFD700; color: black; padding: 20px; font-size: 18px; border: 1px solid black; 	width: 100%; box-sizing: border-box;">
-					<!-- <style> .alertbox a { color : black;} </style> -->
 					This is a mirror of Mallory Ladd's NSF GRFP Advice page. The original (defunct) page can be found <a href='http://www.malloryladd.com/nsf-grfp-advice.html'>here</a>. It is also accessible via the Wayback Machine (e.g. <a href='https://web.archive.org/web/20240000000000*/http://www.malloryladd.com/nsf-grfp-advice.html'>here</a>). The purpose of this mirror is to make this page more accessible to those that are interested. I have Mallory Ladd's permission to host this mirror. If you encounter technical problems, my contact information is listed <a href="../../../../../../../index.html">here</a>.<br><br>
 				
 					<b>As this is a mirror of a resource last updated in 2020, some of the facts may be outdated.</b> For example, below the NSF GRFP stipend is stated to be $34k, but as of August 2024, it has been increased to $37k.<br><br>
